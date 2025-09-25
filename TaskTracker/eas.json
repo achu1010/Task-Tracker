@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 13.2.1"
+    "version": ">= 3.0.0"
   },
   "build": {
     "development": {
@@ -8,31 +8,9 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk",
-        "image": "latest",
-        "resourceClass": "large",
-        "env": {
-          "NODE_ENV": "production"
-        }
-      },
-      "ios": {
-        "image": "latest",
-        "resourceClass": "large",
-        "env": {
-          "NODE_ENV": "production"
-        }
-      }
+      "distribution": "internal"
     },
-    "production": {
-      "android": {
-        "buildType": "app-bundle"
-      },
-      "ios": {
-        "buildConfiguration": "Release"
-      }
-    }
+    "production": {}
   },
   "submit": {
     "production": {}
