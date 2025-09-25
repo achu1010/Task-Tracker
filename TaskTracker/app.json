@@ -6,31 +6,33 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/fonts/**",
+      "assets/images/**"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tasktracker.app",
+      "buildNumber": "2",
+      "infoPlist": {
+        "UIBackgroundModes": ["background-processing"],
+        "NSCameraUsageDescription": "This app uses the camera for profile photos",
+        "NSMicrophoneUsageDescription": "This app uses the microphone for voice input"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.tasktracker.app",
-      "versionCode": 1,
-      "buildOutputs": {
-        "apk": {
-          "enabled": true
-        }
-      }
+      "versionCode": 2,
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"

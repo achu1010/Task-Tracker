@@ -10,12 +10,27 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "latest",
+        "resourceClass": "large",
+        "env": {
+          "NODE_ENV": "production"
+        }
+      },
+      "ios": {
+        "image": "latest",
+        "resourceClass": "large",
+        "env": {
+          "NODE_ENV": "production"
+        }
       }
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
       }
     }
   },
