@@ -2,7 +2,7 @@
   "expo": {
     "name": "TaskTracker",
     "slug": "TaskTracker",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tasktracker.app",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "infoPlist": {
         "UIBackgroundModes": ["background-processing"],
         "NSCameraUsageDescription": "This app uses the camera for profile photos",
@@ -31,7 +31,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.tasktracker.app",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": []
     },
     "web": {
