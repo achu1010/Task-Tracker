@@ -1,0 +1,3 @@
+# Root gitignore for workspace wrapper
+node_modules/
+.expo/

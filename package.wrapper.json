@@ -1,0 +1,12 @@
+{
+  "name": "tasttracker-root",
+  "private": true,
+  "workspaces": [
+    "TaskTracker"
+  ],
+  "scripts": {
+    "start": "cd TaskTracker && npx expo start --tunnel",
+    "start:clear": "cd TaskTracker && npx expo start --tunnel --clear",
+    "build:android": "cd TaskTracker && npx eas build --platform android --profile preview --clear-cache"
+  }
+}
