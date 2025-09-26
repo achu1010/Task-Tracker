@@ -1,0 +1,13 @@
+{
+  "expo-updates": {
+    "codeSigningCertificate": null,
+    "codeSigningMetadata": {
+      "alg": "rsa-v1_5-sha256",
+      "keyid": "app"
+    },
+    "requestHeaders": {},
+    "enabled": false,
+    "checkOnLaunch": "ERROR_RECOVERY_ONLY",
+    "checkAutomatically": "ON_ERROR_RECOVERY"
+  }
+}

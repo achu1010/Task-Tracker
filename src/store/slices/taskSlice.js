@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { cancelTaskNotification, scheduleTaskNotification } from '../../utils/notifications';
 
 const initialState = {
   tasks: [],
@@ -30,15 +31,55 @@ export const taskSlice = createSlice({
       const { id, updates } = action.payload;
       const taskIndex = state.tasks.findIndex(task => task.id === id);
       if (taskIndex !== -1) {
+        const oldTask = state.tasks[taskIndex];
+        
+        // Update the task
         state.tasks[taskIndex] = {
-          ...state.tasks[taskIndex],
+          ...oldTask,
           ...updates,
           updatedAt: new Date().toISOString(),
         };
+        
+        // Handle notification update if due date or reminder changed
+        const newTask = state.tasks[taskIndex];
+        
+        // Cancel old notification if it exists
+        if (oldTask.notificationId) {
+          cancelTaskNotification(oldTask.id).catch(err => 
+            console.error('Failed to cancel notification:', err)
+          );
+        }
+        
+        // Schedule new notification if needed
+        if (newTask.dueDate && newTask.reminder?.enabled && !newTask.completed) {
+          scheduleTaskNotification(
+            newTask.id,
+            newTask.title,
+            newTask.description || 'Task due soon!',
+            new Date(newTask.dueDate)
+          )
+            .then(notificationId => {
+              if (notificationId) {
+                state.tasks[taskIndex].notificationId = notificationId;
+              }
+            })
+            .catch(err => console.error('Failed to schedule notification:', err));
+        }
       }
     },
     
     deleteTask: (state, action) => {
+      // Find the task to be deleted
+      const taskToDelete = state.tasks.find(task => task.id === action.payload);
+      
+      // Cancel notification if it exists
+      if (taskToDelete && taskToDelete.notificationId) {
+        cancelTaskNotification(taskToDelete.id).catch(err => 
+          console.error('Failed to cancel notification:', err)
+        );
+      }
+      
+      // Remove the task from state
       state.tasks = state.tasks.filter(task => task.id !== action.payload);
     },
     
@@ -47,6 +88,33 @@ export const taskSlice = createSlice({
       if (task) {
         task.completed = !task.completed;
         task.updatedAt = new Date().toISOString();
+        
+        // Cancel notification if task is completed and has a notification
+        if (task.completed && task.notificationId) {
+          cancelTaskNotification(task.id).catch(err => 
+            console.error('Failed to cancel notification:', err)
+          );
+          task.notificationId = null;
+        } 
+        // Reschedule notification if task is uncompleted, has due date and reminder
+        else if (!task.completed && task.dueDate && task.reminder?.enabled) {
+          const dueDate = new Date(task.dueDate);
+          // Only schedule if due date is in the future
+          if (dueDate > new Date()) {
+            scheduleTaskNotification(
+              task.id,
+              task.title,
+              task.description || 'Task due soon!',
+              dueDate
+            )
+              .then(notificationId => {
+                if (notificationId) {
+                  task.notificationId = notificationId;
+                }
+              })
+              .catch(err => console.error('Failed to schedule notification:', err));
+          }
+        }
       }
     },
     

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,12 +16,18 @@ import { Picker } from '@react-native-picker/picker';
 import * as Haptics from 'expo-haptics';
 
 import { addTask } from '../store/slices/taskSlice';
+import { registerForPushNotifications, scheduleTaskNotification } from '../utils/notifications';
 
 export default function AddTaskScreen({ navigation }) {
   const dispatch = useDispatch();
   const { categories } = useSelector(state => state.tasks);
   const { theme } = useSelector(state => state.settings);
   const isDark = theme === 'dark';
+  
+  // Request notification permissions when the screen loads
+  useEffect(() => {
+    registerForPushNotifications();
+  }, []);
 
   const [task, setTask] = useState({
     title: '',
@@ -57,13 +63,17 @@ export default function AddTaskScreen({ navigation }) {
     { label: 'Urgent', value: 'urgent', color: '#FF3B30', icon: 'alert-circle' },
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!task.title.trim()) {
       Alert.alert('Error', 'Please enter a task title');
       return;
     }
 
+    // Generate a unique task ID
+    const taskId = Date.now().toString();
+    
     const newTask = {
+      id: taskId, // Set the ID here so we can use it for notifications
       title: task.title.trim(),
       description: task.description.trim(),
       category: task.category,
@@ -83,7 +93,27 @@ export default function AddTaskScreen({ navigation }) {
           createdAt: new Date().toISOString(),
         })),
       completed: false,
+      notificationId: null, // Will store the notification ID if scheduled
     };
+
+    // Schedule notification if due date is set and reminder is enabled
+    if (task.dueDate && task.reminder.enabled) {
+      try {
+        const notificationId = await scheduleTaskNotification(
+          taskId,
+          task.title.trim(),
+          task.description.trim() || 'Task due soon!',
+          task.dueDate
+        );
+        
+        if (notificationId) {
+          newTask.notificationId = notificationId;
+          console.log(`Notification scheduled with ID: ${notificationId}`);
+        }
+      } catch (error) {
+        console.error('Failed to schedule notification:', error);
+      }
+    }
 
     dispatch(addTask(newTask));
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
